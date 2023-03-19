@@ -1,0 +1,29 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/openjdk:11-jdk
+    steps:
+      - checkout
+      - run:
+          name: Install missing dependencies
+          command: sudo apt-get update && sudo apt-get install -y build-essential
+
+      - run: 
+          name: Build with Gradle
+          command: ./gradlew clean assemble
+
+      - run:
+          name: Run tests
+          command: ./gradlew test
+
+      - store_artifacts:
+          path: app/build/outputs/
+
+      - store_test_results:
+          path: app/build/test-results/
+  workflows:
+    build-androidibrary-workflow:
+      jobs:
+        build
